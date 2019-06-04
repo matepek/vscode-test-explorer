@@ -16,7 +16,7 @@ export class ErrorNode {
 		treeItem.command = {
 			title: '',
 			command: 'test-explorer.show-error',
-			arguments: [ this.errorMessage ]
+			arguments: [ this.errorMessage, undefined ]
 		};
 
 		return treeItem;

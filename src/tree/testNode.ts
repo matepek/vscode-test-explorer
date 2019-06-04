@@ -88,10 +88,12 @@ export class TestNode implements TreeNode {
 		if (currentState === 'scheduled') {
 			this._log = "";
 			this._decorations = [];
+			this.collection.explorer.logChanged.fire(this);
 		}
 
 		if (logMessage) {
 			this._log += logMessage + "\n";
+			this.collection.explorer.logChanged.fire(this);
 		}
 
 		if (decorations) {
@@ -179,7 +181,7 @@ export class TestNode implements TreeNode {
 		treeItem.command = {
 			title: '',
 			command: 'test-explorer.show-error',
-			arguments: [ this.log ]
+			arguments: [ this.log, this.uniqueId ]
 		};
 		treeItem.description = this.description;
 		treeItem.tooltip = this.tooltip;

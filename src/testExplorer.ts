@@ -31,6 +31,9 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 
 	private lastTestRun?: [ TestCollection, string[] ];
 
+	public readonly logChanged = new vscode.EventEmitter<TreeNode>();
+	private lastShownInOutputId?: string;
+
 	constructor(
 		public readonly context: vscode.ExtensionContext
 	) {
@@ -43,6 +46,13 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 
 		this.onDidChangeTreeData = this.treeDataChanged.event;
 		this.onDidChangeCodeLenses = this.codeLensesChanged.event;
+
+		this.logChanged.event((node: TreeNode) => {
+			if (node.uniqueId === this.lastShownInOutputId) {
+				this.outputChannel.clear();
+				node.log && this.outputChannel.append(node.log);
+			}
+		});
 	}
 
 	registerTestAdapter(adapter: TestAdapter): void {
@@ -181,7 +191,9 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 		});
 	}
 
-	showError(message: string | undefined): void {
+	showError(message:string, uniqueId: string | undefined): void {
+
+		this.lastShownInOutputId = uniqueId;
 
 		if (message) {
 
